@@ -36,12 +36,18 @@ class Entry:
 		self.subject = str(self.entry["subject"])
 		self.module_taken = str(self.entry["module_taken"])
 		self.tutoring_group = str(self.entry["tutoring_group"])
-		
 		self.report = eval(self.entry["report"])
-		self.strengths = list(self.report["strengths"])
-		self.interventions = list(self.report["interventions"])
-		self.learning_behavior = pd.DataFrame(data=self.report["learning_behavior"]).T
-		self.misc_notes = str(self.report["misc_notes"])
+		
+		self.generals = pd.DataFrame(
+			data={
+				"strengths": {"descriptor": ", ".join(list(self.report["strengths"]))},
+				"interventions": {"descriptor": ", ".join(list(self.report["interventions"]))},
+				"miscellaneous_notes": {"descriptor": str(self.report["misc_notes"])}
+			}
+		).T
+		self.learning_behavior = pd.DataFrame(
+			data=self.report["learning_behavior"]
+		).T
 		self.proceed = bool(self.report["proceed"])
 
 
@@ -57,7 +63,8 @@ class Student:
 		self.nickname = str(context["nickname"])
 		self.grade_level = int(context["grade_level"])
 		self.school = str(context["school"])
-		self.learning_group = str(context["lg_s2"])
+		self.math_status = str(context["math_status"])
+		self.english_status = str(context["english_status"])
 		self.notes = str(context["notes"])
 		self.id = get_id("_".join([self.fullname, str(self.grade_level), self.school]))
 	
@@ -65,6 +72,6 @@ class Student:
 		self.reports = all_reports[all_reports["student_id"] == self.id].sort_values(by=["date", "subject"], ascending=False)
 		self.present_dates = pd.unique(self.reports["date"].dropna())
 		return self.reports
-
+		
 		
 		

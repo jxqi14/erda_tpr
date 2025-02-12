@@ -89,44 +89,50 @@ if (student_name != "Choose a student"):
 	
 	with basic_info:
 		
-		bi11, bi12, bi13 = st.columns([0.5, 0.35, 0.15])
+		bi11, bi12, bi13, bi14 = st.columns([0.45, 0.25, 0.2, 0.1])
 		with bi11:
 			fullname = st.text_input(
-				label="Fullname",
+				label="fullname",
 				value=student.fullname,
 				disabled=True
 			)
 		with bi12:
 			nickname = st.text_input(
-				label="Nickname/s",
+				label="nickname/s",
 				value=student.nickname,
 				disabled=True
 			)
 		with bi13:
-			learning_group = st.text_input(
-				label="Group",
-				value=student.learning_group,
-				help="This is the assigned learning group for second semester insertions.",
-				disabled=True
-			)
-		
-		bi21, bi22, bi23 = st.columns([0.2, 0.1, 0.7])
-		with bi21:
 			school = st.text_input(
-				label="School",
+				label="school",
 				value=student.school,
 				disabled=True
 			)
-		with bi22:
+		with bi14:
 			grade_level = st.text_input(
-				label="Grade",
+				label="grade",
 				value=str(student.grade_level),
 				disabled=True
 			)
+		
+		bi21, bi22, bi23 = st.columns([0.2, 0.2, 0.6])
+		with bi21:
+			math_status = st.text_input(
+				label="math_status",
+				value=student.math_status,
+				disabled=True
+			)
+		with bi22:
+			english_status = st.text_input(
+				label="english_status",
+				value=student.english_status,
+				disabled=True
+			)
 		with bi23:
-			notes = st.text_input(
-				label="Notes",
+			notes = st.text_area(
+				label="notes",
 				value=student.notes,
+				height=68,
 				disabled=True
 			)
 		
@@ -155,65 +161,54 @@ if (student_name != "Choose a student"):
 			tr11, tr12, tr13 = st.columns([0.2, 0.5, 0.3])
 			with tr11:
 				st.text_input(
-					label="Subject",
+					label="subject",
 					value=entry.subject,
 					key=f"tr_subject{key_iter}",
 					disabled=True
 				)
 			with tr12:
 				st.text_input(
-					label="Module taken",
+					label="module taken",
 					value=entry.module_taken,
 					key=f"tr_module{key_iter}",
 					disabled=True
 				)
 			with tr13:
 				st.text_input(
-					label="Tutoring group",
+					label="tutoring group",
 					value=row.tutoring_group,
 					key=f"tr_group{key_iter}",
 					disabled=True
 				)
 				
-			st.text_area(
-				label="What are some of the student's strengths while taking this module?",
-				value=", ".join(entry.strengths),
-				key=f"tr_strengths{key_iter}",
-				height=68,
-				disabled=True
-			)
-			
-			st.text_area(
-				label="What interventions do you think will help the student for the next sessions?",
-				value=", ".join(entry.interventions),
-				key=f"tr_interventions{key_iter}",
-				height=68,
-				disabled=True
-			)
-			
-			st.text_area(
-				label="Miscellaneous notes",
-				value=entry.misc_notes,
-				key=f"tr_miscnotes{key_iter}",
-				height=68,
-				disabled=True
-			)
-			
 			st.text(" ")
 			st.dataframe(
-				data=entry.learning_behavior,
+				data=entry.generals,
 				use_container_width=True,
-				column_order=["descriptor", "notes"],
-				key=f"tr_behavior{key_iter}",
+				key=f"tr_generals{key_iter}",
 				column_config={
 					"descriptor": st.column_config.TextColumn(
 						label="descriptor",
-						width="medium",
+						width="large",	
+						disabled=True
+					)
+				}
+			)
+			
+			st.dataframe(
+				data=entry.learning_behavior,
+				use_container_width=True,
+				column_order=["rating", "notes"],
+				key=f"tr_behavior{key_iter}",
+				column_config={
+					"rating": st.column_config.TextColumn(
+						label="rating",
+						width="small",
 						disabled=True,
 					),
 					"notes": st.column_config.TextColumn(
 						label="notes",
-						width="small",
+						width="large",
 						disabled=True,
 					)
 				}
@@ -226,7 +221,6 @@ if (student_name != "Choose a student"):
 				
 		st.info(f"End of reports for {student.fullname}.", icon=":material/error:")
 		
-	
 	with submit_report:
 		st.info("""
 			This is where you input your report at the end of the session. 
@@ -257,12 +251,30 @@ if (student_name != "Choose a student"):
 		strengths = st.multiselect(
 			label="What are some of the student's strengths while taking this module?",
 			options=pd.unique(constants["strengths_options"].dropna()),
+			default=None,
 			help="Please choose all that apply based on your interaction with the student."
 		)
 		other_strengths = ""
 		if ("other (specify below)" in strengths):
 			other_strengths = st.text_input(
 				label="other strengths:",
+				value="",
+				help="""
+					Please try to be as specific as you can. If you have 
+					multiple responses, please separate them by commas.
+				"""
+			)
+			
+		interventions = st.multiselect(
+			label="What interventions do you think will help the student for the next sessions?",
+			default=None,
+			options=pd.unique(constants["interventions"].dropna())
+		)
+		other_interventions = ""
+		if ("other (specify below)" in interventions):
+			other_interventions = st.text_input(
+				label="other interventions:",
+				value="",
 				help="""
 					Please try to be as specific as you can. If you have 
 					multiple responses, please separate them by commas.
@@ -270,61 +282,51 @@ if (student_name != "Choose a student"):
 			)
 
 		fields = {
-			"attention": "none", 
-			"topic_reception": "none", 
-			"task_reception": "none", 
-			"questions": "none", 
-			"answers": "none"
+			"participation": "Please rate the student's level of participation, with 0 being very distracted and 5 being very attentive. You are free to add  more details on your rating on the corresponding textbox.", 
+			"topic_reception": "Please rate the student's willingness to do their task, with 0 signifying that they completely refused to do the task and 5 signifying that they were enthusiastic in doing the task. You are free to add  more details on your rating on the corresponding textbox.", 
+			"questions/answers": "Please rate the quality of the students' questions/answers, with 0 signifying that they did not ask/answer questions and 5 signifying that their questions/answers were relevant to the topic. You are free to add  more details on your rating on the corresponding textbox. Please note any important questions/requests that they made."
 		}
-		learning_behavior = {field: {"descriptor": "", "notes": ""} for field in fields.keys()}
-		for field in fields.keys():
-			lr3a, lr3b = st.columns([0.55, 0.45])
-			with lr3a:
-				learning_behavior[field]["descriptor"] = st.selectbox(
+		learning_behavior = {field: {"rating": None, "notes": None} for field in fields.keys()}
+		for (field, helpnotes) in fields.items():
+			lr4a, lr4b = st.columns([0.45, 0.55])
+			with lr4a:
+				learning_behavior[field]["rating"] = st.slider(
 					label=field,
-					options=pd.unique(constants[field].dropna())
+					value=0,
+					min_value=0,
+					max_value=5,
+					step=1,
+					help=helpnotes
 				)
-			with lr3b:
+			with lr4b:
 				learning_behavior[field]["notes"] = st.text_area(
 					label=f"notes on {field}",
-					help=fields[field],
+					value="",
 					height=68
 				)
 		
-		lr41, lr42 = st.columns([0.75, 0.25])
-		with lr41:
-			interventions = st.multiselect(
-				label="What interventions do you think will help the student for the next sessions?",
-				options=pd.unique(constants["interventions"].dropna())
+		lr51, lr52 = st.columns([0.65, 0.35])
+		with lr51:
+			additionals = st.text_area(
+				label="What other things should the next tutor know about the student?",
+				height=68,
+				help="""
+					Please include here any additional notes that you were 
+					not able to include in the previous parts. For comments 
+					about the general learning environment, module materials, 
+					and tutoring implementation, please put them on the 
+					Insertion Evaluations tab *unless they are related to 
+					this specific student*.
+				"""
 			)
-			other_interventions = ""
-			if ("other (specify below)" in interventions):
-				other_interventions = st.text_input(
-					label="other interventions:",
-					help="""
-						Please try to be as specific as you can. If you have 
-						multiple responses, please separate them by commas.
-					"""
-				)
-		with lr42:
+		with lr52:
 			proceed = st.radio(
 				label="Should the student move-on to the next module?",
 				options=["Yes", "No"],
 				horizontal=True,
 				help="Please consider all aspects of your report for this decision."
 			)
-		
-		additionals = st.text_area(
-			label="Miscellaneous notes",
-			help="""
-				Please include here any additional notes that you were 
-				not able to include in the previous parts. For comments 
-				about the general learning environment, module materials, 
-				and tutoring implementation, please put them on the 
-				Insertion Evaluations tab *unless they are related to 
-				this specific student*.
-			"""
-		)
+
 		
 		st.text(" ")
 		st.info(f"""
