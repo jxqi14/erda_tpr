@@ -13,4 +13,4 @@ st.set_page_config(
 
 # page content
 st.title("Tutor and Student Progress Report")
-st.write("bla bla introduction and welcome here")
+st.write("Welcome po! Ine-edit pa, sorry, but you will see the links to the modules here.")
