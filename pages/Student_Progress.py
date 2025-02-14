@@ -29,7 +29,7 @@ constants = conn.read(worksheet="CONSTANTS", ttl="10m")
 
 # auxilliary functions
 def get_constants(column):
-	constants = pd.unique(column.dropna())
+	constants = np.sort(pd.unique(column.dropna()))
 	return constants
 
 def format_lists(arr1, arr2):
@@ -45,8 +45,8 @@ def format_lists(arr1, arr2):
 #page content
 st.title("Student Progress")
 
-col1, col2 = st.columns([0.7, 0.3])
-with col1:
+col11, col12 = st.columns([0.7, 0.3])
+with col11:
 	tutor_name = st.text_input(
 		label="tutor_name",
 		value="Jake the Dog",
@@ -57,17 +57,35 @@ with col1:
 			a way to differentiate between the tutors.
 		"""
 	)
-with col2:
+with col12:
 	tutoring_date = st.date_input(
 		label="tutoring_date",
 		value="today",
 		format="DD/MM/YYYY",
 		help="Please input when you tutored the student.",
 	)
-student_name = st.selectbox(
-	label="student_name",
-	options=["Choose a student"] + sorted(students["fullname"].unique()),
-)
+	
+col21, col22, col23 = st.columns([0.2, 0.3, 0.5])
+print(get_constants(students["fullname"]))
+with col21: 
+	grade = st.selectbox(
+		label="grade",
+		options=get_constants(students["grade_level"]),
+		format_func=int
+	)
+with col22:
+	school = st.selectbox(
+		label="school",
+		options=get_constants(students["school"])
+	)
+with col23:
+	student_names = get_constants(students[
+			(students["grade_level"] == grade) & (students["school"] == school)
+		]["fullname"])
+	student_name = st.selectbox(
+		label="student_name",
+		options=student_names
+	)
 st.divider()
 st.warning("""
 	Please note that this page is being cached every 10 minutes	so you
@@ -85,7 +103,8 @@ if (student_name != "Choose a student"):
 	
 	student_reports = student.get_reports(progress_report)
 	
-	basic_info, tutor_reports, submit_report = st.tabs(["Basic Information", "Tutor Reports", "Submit Report"])
+	# ~ basic_info, tutor_reports, submit_report = st.tabs(["Basic Information", "Tutor Reports", "Submit Report"])
+	submit_report, tutor_reports, basic_info = st.tabs(["Submit Report", "Tutor Reports", "Basic Information"])
 	
 	with basic_info:
 		
@@ -242,10 +261,9 @@ if (student_name != "Choose a student"):
 				options=(get_constants(constants["english_modules"]) if subject == "English" else get_constants(constants["math_modules"]))
 			)
 		with lr13:
-			tutoring_group = st.text_input(
+			tutoring_group = st.selectbox(
 				label="Tutoring Group",
-				value="Adventure Time",
-				disabled=True
+				options=get_constants(constants["tutoring_groups"])
 			)
 			
 		strengths = st.multiselect(
