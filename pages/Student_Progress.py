@@ -66,7 +66,6 @@ with col12:
 	)
 	
 col21, col22, col23 = st.columns([0.2, 0.3, 0.5])
-print(get_constants(students["fullname"]))
 with col21: 
 	grade = st.selectbox(
 		label="grade",
@@ -156,7 +155,6 @@ if (student_name != "Choose a student"):
 			)
 		
 	with tutor_reports:
-		
 		show_dates = st.multiselect(
 			label="Show reports for insertion dates...",
 			options=student.present_dates,
@@ -164,8 +162,10 @@ if (student_name != "Choose a student"):
 			help="The date options are arranged such that the latest one is at the top."
 		)
 		st.divider()
-		student_dates_report = student_reports.loc[student_reports["date"].isin(show_dates)]
-		
+		student_dates_report = student_reports \
+			.loc[student_reports["date"].isin(show_dates)] \
+			.drop_duplicates(keep="last")
+			
 		key_iter = 0
 		for row in student_dates_report.itertuples():
 		
@@ -201,37 +201,38 @@ if (student_name != "Choose a student"):
 				)
 				
 			st.text(" ")
-			st.dataframe(
-				data=entry.generals,
-				use_container_width=True,
-				key=f"tr_generals{key_iter}",
-				column_config={
-					"descriptor": st.column_config.TextColumn(
-						label="descriptor",
-						width="large",	
-						disabled=True
-					)
-				}
-			)
+			gen_sizes1 = (0.25, 0.75)
+			f1, d1 = st.columns(gen_sizes1)
+			with f1:
+				st.write(":blue[field]")
+			with d1: 
+				st.write(":blue[descriptor]")
 			
-			st.dataframe(
-				data=entry.learning_behavior,
-				use_container_width=True,
-				column_order=["rating", "notes"],
-				key=f"tr_behavior{key_iter}",
-				column_config={
-					"rating": st.column_config.TextColumn(
-						label="rating",
-						width="small",
-						disabled=True,
-					),
-					"notes": st.column_config.TextColumn(
-						label="notes",
-						width="large",
-						disabled=True,
-					)
-				}
-			)
+			for (key, val) in entry.generals.items():
+				f1g, d1g = st.columns(gen_sizes1)
+				with f1g: 
+					st.write(key)
+				with d1g:
+					st.write(val["descriptor"])
+			
+			st.text(" ")
+			gen_sizes2 = (0.25, 0.1, 0.75)
+			f2, r2, d2 = st.columns(gen_sizes2)
+			with f2:
+				st.write(":blue[field]")
+			with r2:
+				st.write(":blue[rating]")
+			with d2:
+				st.write(":blue[descriptor]")
+			
+			for (key, val) in entry.learning_behavior.items():
+				f2g, r2g, d2g = st.columns(gen_sizes2)
+				with f2g:
+					st.write(key)
+				with r2g:
+					st.write(str(val["rating"]))
+				with d2g:
+					st.write(val["notes"])
 			
 			progress_formatted = (":green[proceed to the next module]" if entry.proceed else ":orange[review the current module]")
 			st.write(f"The tutor recommended to **{progress_formatted}** for the next session.")
@@ -274,7 +275,7 @@ if (student_name != "Choose a student"):
 		)
 		other_strengths = ""
 		if ("other (specify below)" in strengths):
-			other_strengths = st.text_input(
+			other_strengths = st.text_area(
 				label="other strengths:",
 				value="",
 				help="""
@@ -290,7 +291,7 @@ if (student_name != "Choose a student"):
 		)
 		other_interventions = ""
 		if ("other (specify below)" in interventions):
-			other_interventions = st.text_input(
+			other_interventions = st.text_area(
 				label="other interventions:",
 				value="",
 				help="""
@@ -348,10 +349,10 @@ if (student_name != "Choose a student"):
 		
 		st.text(" ")
 		st.info(f"""
-			Please confirm that this is a report by {tutor_name} for the 
-			Erya Insertion on {tutoring_date.strftime('%b %d %Y')}. The 
-			information above will be included in the student profile 
-			of {student_name}.""", 
+			Please confirm that this is a report by :primary[{tutor_name}] 
+			for the Erya Insertion on :primary[{tutoring_date.strftime('%b %d %Y')}].
+			The information above will be included in the student profile of 
+			:primary[{student_name}].""", 
 			icon=":material/error:"
 		)	
 		submit = st.button(

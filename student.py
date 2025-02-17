@@ -2,7 +2,7 @@
 
 import hashlib
 import os
-from datetime import datetime
+from datetime import datetime as dt
 
 import numpy as np
 import pandas as pd
@@ -24,10 +24,12 @@ class Entry:
 		# different formats dependong on the source
 		if (form == "tuple"):
 			self.entry = context._asdict()
-			self.date = datetime.strptime(self.entry["date"], '%Y-%m-%d')
+			self.date = dt.strptime(self.entry["date"], '%b %d %Y')
+			# ~ self.submitted = dt.strptime(self.entry["submitted"], '%b %d %Y %H:%M:%S')
 		elif (form == "dict"):
 			self.entry = context
 			self.date = self.entry["date"]
+			# ~ self.submitted = self.entry["submitted"]
 		
 		self.df = pd.DataFrame(data=self.entry, index=[0])
 		
@@ -38,16 +40,12 @@ class Entry:
 		self.tutoring_group = str(self.entry["tutoring_group"])
 		self.report = eval(self.entry["report"])
 		
-		self.generals = pd.DataFrame(
-			data={
-				"strengths": {"descriptor": ", ".join(list(self.report["strengths"]))},
-				"interventions": {"descriptor": ", ".join(list(self.report["interventions"]))},
-				"miscellaneous_notes": {"descriptor": str(self.report["misc_notes"])}
-			}
-		).T
-		self.learning_behavior = pd.DataFrame(
-			data=self.report["learning_behavior"]
-		).T
+		self.generals = {
+			"strengths": {"descriptor": ", ".join(list(self.report["strengths"]))},
+			"interventions": {"descriptor": ", ".join(list(self.report["interventions"]))},
+			"miscellaneous_notes": {"descriptor": str(self.report["misc_notes"])}
+		}
+		self.learning_behavior = self.report["learning_behavior"]
 		self.proceed = bool(self.report["proceed"])
 
 
