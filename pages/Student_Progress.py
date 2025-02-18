@@ -235,11 +235,11 @@ if (student_name != "Choose a student"):
 					st.write(val["notes"])
 			
 			progress_formatted = (":green[proceed to the next module]" if entry.proceed else ":orange[review the current module]")
-			st.write(f"The tutor recommended to **{progress_formatted}** for the next session.")
+			st.write(f"The tutor recommended to **{progress_formatted}** for the next {entry.subject} session.")
 			
 			st.divider()
 				
-		st.info(f"End of reports for {student.fullname}.", icon=":material/error:")
+		st.info(f"End of reports for :primary[{student.fullname}].", icon=":material/error:")
 		
 	with submit_report:
 		st.info("""

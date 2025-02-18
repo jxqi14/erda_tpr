@@ -28,7 +28,7 @@ with st.expander(label="I want to check the TUTOR GROUPINGS", expanded=False, ic
 	st.write(f"""
 		Gorabels po, check them [though this link]({constants.loc[0, 'extra_links']}). 
 		
-		If you have any concerns, please contact Ivy Pulido, Kate Aizpuru, Dory Robles, or Seya Nato. 
+		If you have any concerns, please contact [Ivy Pulido]{constants.loc[5, 'extra_links']}, [Kate Aizpuru]{constants.loc[6, 'extra_links']}, [Dory Robles]{constants.loc[3, 'extra_links']}, or [Seya Nato]{constants.loc[4, 'extra_links']}. 
 	""")
 
 
