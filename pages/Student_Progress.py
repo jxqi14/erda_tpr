@@ -233,7 +233,8 @@ if (student_name != "Choose a student"):
 					st.write(str(val["rating"]))
 				with d2g:
 					st.write(val["notes"])
-			
+
+			st.text(" ")
 			progress_formatted = (":green[proceed to the next module]" if entry.proceed else ":orange[review the current module]")
 			st.write(f"The tutor recommended to **{progress_formatted}** for the next {entry.subject} session.")
 			
