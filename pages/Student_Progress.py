@@ -201,7 +201,7 @@ if (student_name != "Choose a student"):
 				)
 				
 			st.text(" ")
-			gen_sizes1 = (0.25, 0.75)
+			gen_sizes1 = (0.35, 0.65)
 			f1, d1 = st.columns(gen_sizes1)
 			with f1:
 				st.write(":blue[field]")
@@ -216,7 +216,7 @@ if (student_name != "Choose a student"):
 					st.write(val["descriptor"])
 			
 			st.text(" ")
-			gen_sizes2 = (0.25, 0.1, 0.75)
+			gen_sizes2 = (0.25, 0.1, 0.65)
 			f2, r2, d2 = st.columns(gen_sizes2)
 			with f2:
 				st.write(":blue[field]")
