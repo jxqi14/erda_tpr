@@ -90,7 +90,7 @@ st.warning("""
 	Please note that this page is being cached every 10 minutes	so you
 	might experience unusual behavior with the form at this interval. 
 	Do not worry as your answers are regularly saved, but will only be 
-	considered final once you click ':primary[Submit Report]' (in case 
+	considered final once you click :primary[Submit Report] (in case 
 	you are submitting a report).
 """)
 
