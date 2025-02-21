@@ -368,7 +368,6 @@ if (student_name != "Choose a student"):
 				"learning_behavior": learning_behavior,
 				"interventions": format_lists(interventions, other_interventions),
 				"misc_notes": additionals,
-				"proceed": (proceed == "Yes"),
 			}
 			row = {
 				"student_id": student.id,
@@ -378,6 +377,8 @@ if (student_name != "Choose a student"):
 				"module_taken": module,
 				"tutoring_group": tutoring_group,
 				"report": repr(report),
+				"proceed": (proceed == "Yes"),
+				"submitted": dt.now(),
 			}
 			
 			entry = sd.Entry(row, form="dict")

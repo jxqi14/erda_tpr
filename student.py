@@ -25,11 +25,11 @@ class Entry:
 		if (form == "tuple"):
 			self.entry = context._asdict()
 			self.date = dt.strptime(self.entry["date"], '%b %d %Y')
-			# ~ self.submitted = dt.strptime(self.entry["submitted"], '%b %d %Y %H:%M:%S')
+			self.submitted = dt.strptime(self.entry["submitted"], '%b %d %Y %H:%M:%S')
 		elif (form == "dict"):
 			self.entry = context
 			self.date = self.entry["date"]
-			# ~ self.submitted = self.entry["submitted"]
+			self.submitted = self.entry["submitted"]
 		
 		self.df = pd.DataFrame(data=self.entry, index=[0])
 		
@@ -39,6 +39,7 @@ class Entry:
 		self.module_taken = str(self.entry["module_taken"])
 		self.tutoring_group = str(self.entry["tutoring_group"])
 		self.report = eval(self.entry["report"])
+		self.proceed = bool(self.entry["proceed"])
 		
 		self.generals = {
 			"strengths": {"descriptor": ", ".join(list(self.report["strengths"]))},
@@ -46,7 +47,6 @@ class Entry:
 			"miscellaneous_notes": {"descriptor": str(self.report["misc_notes"])}
 		}
 		self.learning_behavior = self.report["learning_behavior"]
-		self.proceed = bool(self.report["proceed"])
 
 
 	def add_to(self, curr_df):
